@@ -120,7 +120,7 @@ class TFProcess:
         tf.config.experimental.set_visible_devices(gpus[self.cfg['gpu']], 'GPU')
         tf.config.experimental.set_memory_growth(gpus[self.cfg['gpu']], True)
         if self.model_dtype == tf.float16:
-            tf.keras.mixed_precision.experimental.set_policy('mixed_float16')
+            tf.keras.mixed_precision.set_global_policy('mixed_float16')
 
         self.global_step = tf.Variable(0, name='global_step', trainable=False, dtype=tf.int64)
 
@@ -136,6 +136,9 @@ class TFProcess:
         input_var = tf.keras.Input(shape=(112, 8*8))
         x_planes = tf.keras.layers.Reshape([112, 8, 8])(input_var)
         self.model = tf.keras.Model(inputs=input_var, outputs=self.construct_net_v2(x_planes))
+        #self.net.parse_proto(r"C:\Users\magle\Desktop\Dateien\Python\maia-chess\maia_weights\maia-1900.pb.gz")
+        #self.model.load_weights(r"C:\Users\magle\Desktop\Dateien\Python\maia-chess\maia_weights\maia-1900.pb.gz")
+
         # swa_count initialized reguardless to make checkpoint code simpler.
         self.swa_count = tf.Variable(0., name='swa_count', trainable=False)
         self.swa_weights = None
@@ -147,7 +150,7 @@ class TFProcess:
         self.optimizer = tf.keras.optimizers.SGD(learning_rate=lambda: self.active_lr, momentum=0.9, nesterov=True)
         self.orig_optimizer = self.optimizer
         if self.loss_scale != 1:
-            self.optimizer = tf.keras.mixed_precision.experimental.LossScaleOptimizer(self.optimizer, self.loss_scale)
+            self.optimizer = tf.keras.mixed_precision.LossScaleOptimizer(self.optimizer,initial_scale= self.loss_scale)
         def correct_policy(target, output):
             output = tf.cast(output, tf.float32)
             # Calculate loss on policy head

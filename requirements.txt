@@ -3,7 +3,7 @@ python-chess
 pytz
 humanize
 tensorboard
-tensorflow
+"tensorflow<2.10"
 protobuf
 tensorboardx
 seaborn

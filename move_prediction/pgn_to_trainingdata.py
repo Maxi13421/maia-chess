@@ -23,9 +23,11 @@ os.chdir(os.path.join(output_files, 'blocks'))
 pgn_extract_path = os.path.join(os.getcwd(), r'C:\Users\magle\Desktop\Dateien\Python\maia-chess\pgn-extract.exe')
 
 # Run pgn-extract
+# Default war 1000
 subprocess.run([pgn_extract_path, '-7', '-C', '-N', '-#100', input_file], check=True)
 
 # Move the first 3000 PGN files to the validation set
+# Aktuell 900
 for i in range(1, 10):
     src = f"{i}.pgn"
     dst = os.path.join(output_files, 'validation', f"{i}.pgn")
@@ -38,7 +40,7 @@ for pgn_file in os.listdir('.'):
         os.rename(pgn_file, os.path.join(output_files, 'training', pgn_file))
 
 os.chdir('..')
-shutil.rmtree(os.path.join(output_files, 'blocks'))
+#shutil.rmtree(os.path.join(output_files, 'blocks'))
 
 
 def process_pgn(data_type, p):
